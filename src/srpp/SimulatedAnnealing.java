@@ -80,10 +80,11 @@ public class SimulatedAnnealing {
             }
             listaCiezarowek.add(aktualnaCiezarowka);
         }
-        
+        wypiszCiezarowki();
         for (Ciezaroweczka pojazd : listaCiezarowek) {
             komiwojazerCiezarowka(pojazd);
         }
+        wypiszCiezarowki();
     }
     
     public void komiwojazerCiezarowka(Ciezaroweczka aktualnyPojazd){
@@ -124,10 +125,10 @@ public class SimulatedAnnealing {
             System.out.println();
         }*/
         
-        wyliczenieKomiwojarzera(macierzSasiedztwa);
+        wyliczenieKomiwojarzera(macierzSasiedztwa, aktualnyPojazd);
     }
     
-    private void wyliczenieKomiwojarzera(float adjacencyMatrix[][]){
+    private void wyliczenieKomiwojarzera(float adjacencyMatrix[][], Ciezaroweczka obliczanyPojazd){
         Stack<Integer> stos = new Stack<>();
         
         int liczbaWezlow = adjacencyMatrix[1].length - 1;
@@ -140,6 +141,13 @@ public class SimulatedAnnealing {
         int dst = 0;
         float min = Float.MAX_VALUE;
         boolean minFlag = false;
+        
+        int[] nowaKolejnosc = new int[k + 1];
+        int pozycja = 1;
+        for(int j=1;j<=k;j++){
+            nowaKolejnosc[j]= -2;
+        }
+        nowaKolejnosc[0] = 0;
        
         System.out.print(1 + "\t");
 
@@ -162,7 +170,7 @@ public class SimulatedAnnealing {
             if (minFlag) {
                 odwiedzone[dst] = 1;
                 stos.push(dst);
-                System.out.print(dst + "\t");
+                System.out.print(dst + "\t"); nowaKolejnosc[pozycja]= dst-1; ++pozycja;
                 minFlag = false;
                 continue;
             }
@@ -171,6 +179,21 @@ public class SimulatedAnnealing {
         
         System.out.println();
         
+        /*for(int j=0;j<=k;j++){
+            System.out.print(nowaKolejnosc[j] + "\t");
+        }
+        System.out.println();*/
+        
+        nowaKolejnosc[0] = -1;
+        for (int j = 1; j <= k; j++) {
+            if (nowaKolejnosc[j] != -2) {
+                nowaKolejnosc[j] = obliczanyPojazd.listaMiastDoOdwiedzenia[nowaKolejnosc[j]];
+            }
+        }
+
+        for (int j = 0; j <= k; j++) {
+            obliczanyPojazd.listaMiastDoOdwiedzenia[j] = nowaKolejnosc[j];
+        } 
     }
     
     public void wypiszCiezarowki() {

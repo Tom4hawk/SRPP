@@ -25,7 +25,7 @@ public class SRPP {
             try {
                 problem.readFile(file);
                 problem.pierwszeWybranieMiast();
-                problem.wypiszCiezarowki();
+                //problem.wypiszCiezarowki();
             } catch (IOException ex) {
                 Logger.getLogger(SRPP.class.getName()).log(Level.SEVERE, null, ex);
                 System.err.println("Nastąpił niespodziewany problem");
