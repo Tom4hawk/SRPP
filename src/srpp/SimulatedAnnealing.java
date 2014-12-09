@@ -13,6 +13,7 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  *
@@ -79,13 +80,104 @@ public class SimulatedAnnealing {
             }
             listaCiezarowek.add(aktualnaCiezarowka);
         }
+        
+        for (Ciezaroweczka pojazd : listaCiezarowek) {
+            komiwojazerCiezarowka(pojazd);
+        }
+    }
+    
+    public void komiwojazerCiezarowka(Ciezaroweczka aktualnyPojazd){
+        int iloscMiastWTrasie = 0;
+        
+        for(int i = 0; i <=k; i++){
+            if(aktualnyPojazd.listaMiastDoOdwiedzenia[i]!=-2)
+                iloscMiastWTrasie++;
+        }
+        aktualnyPojazd.iloscMiastWTrasie = iloscMiastWTrasie;
+        
+        float macierzSasiedztwa[][] = new float[iloscMiastWTrasie + 1][iloscMiastWTrasie + 1];
+
+        for (int i = 1; i <= iloscMiastWTrasie; i++) {
+            for (int j = 1; j <= iloscMiastWTrasie; j++) {
+                Miasto miastoA = new Miasto();
+                Miasto miastoB = new Miasto();
+                if(aktualnyPojazd.listaMiastDoOdwiedzenia[i-1] == -1){
+                    miastoA = magazyn;
+                } else {
+                    miastoA = listaMiast.get(aktualnyPojazd.listaMiastDoOdwiedzenia[i-1]);
+                }
+                
+                if(aktualnyPojazd.listaMiastDoOdwiedzenia[j-1] == -1){
+                    miastoB = magazyn;
+                } else {
+                    miastoB = listaMiast.get(aktualnyPojazd.listaMiastDoOdwiedzenia[j-1]);
+                }
+
+                macierzSasiedztwa[i][j] = odlegloscMiast(miastoA, miastoB);
+            }
+        }
+        
+        /*for (int i = 1; i <= iloscMiastWTrasie; i++) {
+            for (int j = 1; j <= iloscMiastWTrasie; j++) {
+                System.out.print(macierzSasiedztwa[i][j] + " ");
+            }
+            System.out.println();
+        }*/
+        
+        wyliczenieKomiwojarzera(macierzSasiedztwa);
+    }
+    
+    private void wyliczenieKomiwojarzera(float adjacencyMatrix[][]){
+        Stack<Integer> stos = new Stack<>();
+        
+        int liczbaWezlow = adjacencyMatrix[1].length - 1;
+        int[] odwiedzone = new int[liczbaWezlow + 1];
+        
+        odwiedzone[1] = 1;
+        stos.push(1);
+        
+        int element, i;
+        int dst = 0;
+        float min = Float.MAX_VALUE;
+        boolean minFlag = false;
+       
+        System.out.print(1 + "\t");
+
+        while (!stos.isEmpty()) {
+            element = stos.peek();
+            i = 1;
+            min = Float.MAX_VALUE;
+
+            while (i <= liczbaWezlow) {
+                if (adjacencyMatrix[element][i] > 1 && odwiedzone[i] == 0) {
+                    if (min > adjacencyMatrix[element][i]) {
+                        min = adjacencyMatrix[element][i];
+                        dst = i;
+                        minFlag = true;
+                    }
+                }
+                i++;
+            }
+
+            if (minFlag) {
+                odwiedzone[dst] = 1;
+                stos.push(dst);
+                System.out.print(dst + "\t");
+                minFlag = false;
+                continue;
+            }
+            stos.pop();
+        }
+        
+        System.out.println();
+        
     }
     
     public void wypiszCiezarowki() {
         int numerCiezarowki = 1;
         
         for (Ciezaroweczka pojazd : listaCiezarowek) {
-            System.out.println("Ciężarówka numer " + numerCiezarowki + ":");
+            System.out.println("[" + pojazd.iloscMiastWTrasie + "]Ciężarówka numer " + numerCiezarowki + ":");
             for (int i = 0; i <= k; ++i) {
                 System.out.print(" " + pojazd.listaMiastDoOdwiedzenia[i]);
             }
