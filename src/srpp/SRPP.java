@@ -25,7 +25,7 @@ public class SRPP {
             try {
                 problem.readFile(file);
                 problem.pierwszeWybranieMiast();
-                problem.wypiszCiezarowki();
+                //problem.wypiszCiezarowki();
                 problem.startObliczen();
                 problem.wypiszCiezarowki();
             } catch (IOException ex) {

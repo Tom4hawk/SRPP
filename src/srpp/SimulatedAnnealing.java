@@ -99,7 +99,7 @@ public class SimulatedAnnealing {
         //System.out.println(sumaTras());
         Random rand = new Random();
         float aktualnaTemp = 100000;
-        float mnoznikChlodzenia = (float) 0.003;
+        float mnoznikChlodzenia = (float) 0.000001;
         int potrzebnePojazdy = ilePojazdow - 2;
         int tymczasowySchowekNaMiasto;//:D
         int[] backupPierwszegoPojazdu = new int[k + 1];
@@ -107,7 +107,7 @@ public class SimulatedAnnealing {
         
 
         //mamy już wygenerowane jakies rozwiazanie
-        
+        //float best = sumaTras(); niepotrzebne, minimalne różnice a trzebaby backupować dużo
         
         while(aktualnaTemp > 1){
             float staraOdleglosc = sumaTras();
@@ -135,7 +135,7 @@ public class SimulatedAnnealing {
             
             //System.out.println("[" + nowaOdleglosc + " " + staraOdleglosc + "]");
             
-            if(nowaOdleglosc > staraOdleglosc){
+            if(szansaAkceptacji(nowaOdleglosc, staraOdleglosc, aktualnaTemp) < Math.random()){
                 //System.out.println("OK");
                 System.arraycopy(backupPierwszegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia, 0, backupPierwszegoPojazdu.length);
                 System.arraycopy(backupDrugiegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia, 0, backupDrugiegoPojazdu.length);
@@ -143,13 +143,23 @@ public class SimulatedAnnealing {
                 komiwojazerCiezarowka(listaCiezarowek.get(pojazdDoZmiany1));
                 komiwojazerCiezarowka(listaCiezarowek.get(pojazdDoZmiany2));     
             }
-      
-            aktualnaTemp--;
+            
+            /*if(nowaOdleglosc<best){
+                best = nowaOdleglosc;
+            }*/
+            
+            aktualnaTemp *= 1 - mnoznikChlodzenia;
+            //aktualnaTemp--;
         }
+        //System.out.println("Best: " + best);
+        
     }
     
-    public float szansaAkceptacji(){
-       return 0; 
+    public float szansaAkceptacji(float nowaOdleglosc, float staraOdleglosc, float temperatura){
+        if(nowaOdleglosc < staraOdleglosc){
+            return (float) 1.0;
+        }
+       return (float) Math.exp((staraOdleglosc - nowaOdleglosc) / temperatura);
     }
     
     public void komiwojazerCiezarowka(Ciezaroweczka aktualnyPojazd){
