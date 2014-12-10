@@ -13,6 +13,7 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -96,6 +97,59 @@ public class SimulatedAnnealing {
     
     public void startObliczen(){
         //System.out.println(sumaTras());
+        Random rand = new Random();
+        float aktualnaTemp = 1000;
+        float mnoznikChlodzenia = (float) 0.003;
+        int potrzebnePojazdy = ilePojazdow - 2;
+        int tymczasowySchowekNaMiasto;//:D
+        int[] backupPierwszegoPojazdu = new int[k + 1];
+        int[] backupDrugiegoPojazdu = new int[k + 1];
+        
+
+        //mamy już wygenerowane jakies rozwiazanie
+        
+        
+        while(aktualnaTemp > 1){
+            float staraOdleglosc = sumaTras();
+            
+            
+            int pojazdDoZmiany1 = rand.nextInt((potrzebnePojazdy - 0) + 1) + 0;//ilePojazdow
+            int pojazdDoZmiany2 = rand.nextInt((potrzebnePojazdy - 0) + 1) + 0;
+            System.out.println("[" + pojazdDoZmiany1 + " " + pojazdDoZmiany2);
+            
+            int miastoDoZmiany1 = rand.nextInt((k - 1) + 1) + 1;
+            int miastoDoZmiany2 = rand.nextInt((k - 1) + 1) + 1;
+            System.out.println(miastoDoZmiany1 + " " + miastoDoZmiany2);
+            
+            System.arraycopy(listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia, 0, backupPierwszegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia.length);
+            System.arraycopy(listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia, 0, backupDrugiegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia.length);
+            
+            tymczasowySchowekNaMiasto = listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia[miastoDoZmiany1];
+            listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia[miastoDoZmiany1] = listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia[miastoDoZmiany2];
+            listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia[miastoDoZmiany2] = tymczasowySchowekNaMiasto;
+            
+            komiwojazerCiezarowka(listaCiezarowek.get(pojazdDoZmiany1));
+            komiwojazerCiezarowka(listaCiezarowek.get(pojazdDoZmiany2));
+            
+            float nowaOdleglosc = sumaTras();
+            
+            System.out.println("[" + nowaOdleglosc + " " + staraOdleglosc + "]");
+            
+            if(nowaOdleglosc > staraOdleglosc){
+                System.out.println("OK");
+                System.arraycopy(backupPierwszegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia, 0, backupPierwszegoPojazdu.length);
+                System.arraycopy(backupDrugiegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia, 0, backupDrugiegoPojazdu.length);
+       
+                komiwojazerCiezarowka(listaCiezarowek.get(pojazdDoZmiany1));
+                komiwojazerCiezarowka(listaCiezarowek.get(pojazdDoZmiany2));     
+            }
+      
+            aktualnaTemp--;
+        }
+    }
+    
+    public float szansaAkceptacji(){
+       return 0; 
     }
     
     public void komiwojazerCiezarowka(Ciezaroweczka aktualnyPojazd){
