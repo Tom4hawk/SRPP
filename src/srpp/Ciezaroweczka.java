@@ -10,7 +10,7 @@ package srpp;
  * @author tom4hawk
  */
 public class Ciezaroweczka {
-    public int dlugoscTrasy;
+    public float dlugoscTrasy;
     public int iloscMiastWTrasie;
     public int[] listaMiastDoOdwiedzenia;
 }

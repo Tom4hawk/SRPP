@@ -54,11 +54,12 @@ public class SimulatedAnnealing {
             listaMiast.add(aktualneMiasto);
         }
         
-        for (Miasto miasto : listaMiast) {
+       /* for (Miasto miasto : listaMiast) {
             System.out.println(miasto.x + " | " + miasto.y);
-        }
-        System.out.println(ileMiast);
-        System.out.println(magazyn.x + "mag" + magazyn.y);
+        }*/
+        //System.out.println(magazyn.x + "mag" + magazyn.y);
+        System.out.println("Ile jest miast: " + ileMiast);
+        
         br.close();
     }
     
@@ -80,11 +81,20 @@ public class SimulatedAnnealing {
             }
             listaCiezarowek.add(aktualnaCiezarowka);
         }
+        
+        for (Ciezaroweczka pojazd : listaCiezarowek) {
+            wyliczDlugoscTrasy(pojazd);
+        }      
         wypiszCiezarowki();
         for (Ciezaroweczka pojazd : listaCiezarowek) {
             komiwojazerCiezarowka(pojazd);
         }
+ 
         wypiszCiezarowki();
+    }
+    
+    public void startObliczen(){
+        System.out.println(sumaTras());
     }
     
     public void komiwojazerCiezarowka(Ciezaroweczka aktualnyPojazd){
@@ -125,10 +135,10 @@ public class SimulatedAnnealing {
             System.out.println();
         }*/
         
-        wyliczenieKomiwojarzera(macierzSasiedztwa, aktualnyPojazd);
+        wyliczenieKomiwojazera(macierzSasiedztwa, aktualnyPojazd);
     }
     
-    private void wyliczenieKomiwojarzera(float adjacencyMatrix[][], Ciezaroweczka obliczanyPojazd){
+    private void wyliczenieKomiwojazera(float adjacencyMatrix[][], Ciezaroweczka obliczanyPojazd){
         Stack<Integer> stos = new Stack<>();
         
         int liczbaWezlow = adjacencyMatrix[1].length - 1;
@@ -149,7 +159,7 @@ public class SimulatedAnnealing {
         }
         nowaKolejnosc[0] = 0;
        
-        System.out.print(1 + "\t");
+        //System.out.print(1 + "\t");
 
         while (!stos.isEmpty()) {
             element = stos.peek();
@@ -170,7 +180,7 @@ public class SimulatedAnnealing {
             if (minFlag) {
                 odwiedzone[dst] = 1;
                 stos.push(dst);
-                System.out.print(dst + "\t"); nowaKolejnosc[pozycja]= dst-1; ++pozycja;
+                /*System.out.print(dst + "\t");*/ nowaKolejnosc[pozycja]= dst-1; ++pozycja;
                 minFlag = false;
                 continue;
             }
@@ -193,14 +203,16 @@ public class SimulatedAnnealing {
 
         for (int j = 0; j <= k; j++) {
             obliczanyPojazd.listaMiastDoOdwiedzenia[j] = nowaKolejnosc[j];
-        } 
+        }
+        
+        wyliczDlugoscTrasy(obliczanyPojazd);
     }
     
     public void wypiszCiezarowki() {
         int numerCiezarowki = 1;
         
         for (Ciezaroweczka pojazd : listaCiezarowek) {
-            System.out.println("[" + pojazd.iloscMiastWTrasie + "]Ciężarówka numer " + numerCiezarowki + ":");
+            System.out.println("[" + pojazd.iloscMiastWTrasie + "]" + "(" + pojazd.dlugoscTrasy + ")" + "Ciężarówka numer " + numerCiezarowki + ":");
             for (int i = 0; i <= k; ++i) {
                 System.out.print(" " + pojazd.listaMiastDoOdwiedzenia[i]);
             }
@@ -213,5 +225,34 @@ public class SimulatedAnnealing {
         float dx = drugie.x - pierwsze.x;
         float dy = drugie.y - pierwsze.y;
         return (float) sqrt(dx * dx + dy * dy);
+    }
+
+    private void wyliczDlugoscTrasy(Ciezaroweczka pojazd) {
+        pojazd.dlugoscTrasy = 0;
+        pojazd.dlugoscTrasy = odlegloscMiast(magazyn, listaMiast.get(pojazd.listaMiastDoOdwiedzenia[1]));
+        
+        for(int i=1; i<(k-1); ++i){
+            if(pojazd.listaMiastDoOdwiedzenia[i+1] != -2){
+                pojazd.dlugoscTrasy += odlegloscMiast(listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i]), listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i+1]));
+            } else{
+                System.out.println("ddddddd");
+                pojazd.dlugoscTrasy += odlegloscMiast(listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i]), magazyn);
+                break;
+            }
+        }
+    }
+
+    private float sumaTras() {
+        float suma = 0;
+        int ilePojazdow=0;
+        
+        for (Ciezaroweczka pojazd : listaCiezarowek){
+            suma += pojazd.dlugoscTrasy;
+            ilePojazdow++;
+        }
+        
+        System.out.println("Ile pojazdow na trasach: " + ilePojazdow);
+        
+        return suma;
     }
 }
