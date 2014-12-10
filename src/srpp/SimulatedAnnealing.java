@@ -25,6 +25,7 @@ public class SimulatedAnnealing {
     private List<Ciezaroweczka> listaCiezarowek;//lista ciezarowek wraz z trasami przypisanymi do kazdej
     private Miasto magazyn;
     private int ileMiast;//liczba miast minus jeden(żeby się indeksy z Arraylist zgadzały)
+    private int ilePojazdow;
     
     public void readFile(String pathToFile) throws FileNotFoundException, IOException{
         BufferedReader br = new BufferedReader(new FileReader(pathToFile));
@@ -58,7 +59,7 @@ public class SimulatedAnnealing {
             System.out.println(miasto.x + " | " + miasto.y);
         }*/
         //System.out.println(magazyn.x + "mag" + magazyn.y);
-        System.out.println("Ile jest miast: " + ileMiast);
+        //System.out.println("Ile jest miast: " + ileMiast);
         
         br.close();
     }
@@ -82,19 +83,19 @@ public class SimulatedAnnealing {
             listaCiezarowek.add(aktualnaCiezarowka);
         }
         
-        for (Ciezaroweczka pojazd : listaCiezarowek) {
+        /*for (Ciezaroweczka pojazd : listaCiezarowek) {
             wyliczDlugoscTrasy(pojazd);
         }      
-        wypiszCiezarowki();
+        wypiszCiezarowki();*/
         for (Ciezaroweczka pojazd : listaCiezarowek) {
             komiwojazerCiezarowka(pojazd);
         }
  
-        wypiszCiezarowki();
+        //wypiszCiezarowki();
     }
     
     public void startObliczen(){
-        System.out.println(sumaTras());
+        //System.out.println(sumaTras());
     }
     
     public void komiwojazerCiezarowka(Ciezaroweczka aktualnyPojazd){
@@ -187,7 +188,7 @@ public class SimulatedAnnealing {
             stos.pop();
         }
         
-        System.out.println();
+        //System.out.println();
         
         /*for(int j=0;j<=k;j++){
             System.out.print(nowaKolejnosc[j] + "\t");
@@ -209,16 +210,23 @@ public class SimulatedAnnealing {
     }
     
     public void wypiszCiezarowki() {
-        int numerCiezarowki = 1;
-        
+        System.out.println(sumaTras());
+        System.out.println(ilePojazdow);
         for (Ciezaroweczka pojazd : listaCiezarowek) {
+            for (int i = 0; i <= k; ++i) {
+                System.out.print(" " + (pojazd.listaMiastDoOdwiedzenia[i]+1));
+            }
+            System.out.println(" 0");
+        }
+        
+        /*for (Ciezaroweczka pojazd : listaCiezarowek) {
             System.out.println("[" + pojazd.iloscMiastWTrasie + "]" + "(" + pojazd.dlugoscTrasy + ")" + "Ciężarówka numer " + numerCiezarowki + ":");
             for (int i = 0; i <= k; ++i) {
                 System.out.print(" " + pojazd.listaMiastDoOdwiedzenia[i]);
             }
             System.out.println();
             ++numerCiezarowki;
-        }
+        }*/
     }
     
     private float odlegloscMiast(Miasto pierwsze, Miasto drugie){
@@ -228,31 +236,37 @@ public class SimulatedAnnealing {
     }
 
     private void wyliczDlugoscTrasy(Ciezaroweczka pojazd) {
+        int i = 0;
         pojazd.dlugoscTrasy = 0;
+
+        //System.out.println("-1 " + pojazd.listaMiastDoOdwiedzenia[1]);
         pojazd.dlugoscTrasy = odlegloscMiast(magazyn, listaMiast.get(pojazd.listaMiastDoOdwiedzenia[1]));
-        
-        for(int i=1; i<(k-1); ++i){
-            if(pojazd.listaMiastDoOdwiedzenia[i+1] != -2){
-                pojazd.dlugoscTrasy += odlegloscMiast(listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i]), listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i+1]));
-            } else{
-                System.out.println("ddddddd");
-                pojazd.dlugoscTrasy += odlegloscMiast(listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i]), magazyn);
+
+        for (i = 2; i <= k; ++i) {
+            if (pojazd.listaMiastDoOdwiedzenia[i] != -2) {
+                //System.out.println(pojazd.listaMiastDoOdwiedzenia[i-1] + " " + pojazd.listaMiastDoOdwiedzenia[i]);
+                pojazd.dlugoscTrasy += odlegloscMiast(listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i - 1]), listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i]));
+            } else {
                 break;
             }
         }
+
+        //System.out.println(pojazd.listaMiastDoOdwiedzenia[i-1] + "  -1");
+        pojazd.dlugoscTrasy += odlegloscMiast(listaMiast.get(pojazd.listaMiastDoOdwiedzenia[i - 1]), magazyn);
+        //System.out.println("=========== " + pojazd.dlugoscTrasy);
     }
 
     private float sumaTras() {
         float suma = 0;
-        int ilePojazdow=0;
-        
-        for (Ciezaroweczka pojazd : listaCiezarowek){
+        ilePojazdow = 0;
+
+        for (Ciezaroweczka pojazd : listaCiezarowek) {
             suma += pojazd.dlugoscTrasy;
             ilePojazdow++;
         }
-        
-        System.out.println("Ile pojazdow na trasach: " + ilePojazdow);
-        
+
+        //System.out.println("Ile pojazdow na trasach: " + ilePojazdow);
+
         return suma;
     }
 }
