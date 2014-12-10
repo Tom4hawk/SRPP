@@ -98,7 +98,7 @@ public class SimulatedAnnealing {
     public void startObliczen(){
         //System.out.println(sumaTras());
         Random rand = new Random();
-        float aktualnaTemp = 1000;
+        float aktualnaTemp = 100000;
         float mnoznikChlodzenia = (float) 0.003;
         int potrzebnePojazdy = ilePojazdow - 2;
         int tymczasowySchowekNaMiasto;//:D
@@ -115,11 +115,11 @@ public class SimulatedAnnealing {
             
             int pojazdDoZmiany1 = rand.nextInt((potrzebnePojazdy - 0) + 1) + 0;//ilePojazdow
             int pojazdDoZmiany2 = rand.nextInt((potrzebnePojazdy - 0) + 1) + 0;
-            System.out.println("[" + pojazdDoZmiany1 + " " + pojazdDoZmiany2);
+            //System.out.println("[" + pojazdDoZmiany1 + " " + pojazdDoZmiany2);
             
             int miastoDoZmiany1 = rand.nextInt((k - 1) + 1) + 1;
             int miastoDoZmiany2 = rand.nextInt((k - 1) + 1) + 1;
-            System.out.println(miastoDoZmiany1 + " " + miastoDoZmiany2);
+            //System.out.println(miastoDoZmiany1 + " " + miastoDoZmiany2);
             
             System.arraycopy(listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia, 0, backupPierwszegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia.length);
             System.arraycopy(listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia, 0, backupDrugiegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia.length);
@@ -133,10 +133,10 @@ public class SimulatedAnnealing {
             
             float nowaOdleglosc = sumaTras();
             
-            System.out.println("[" + nowaOdleglosc + " " + staraOdleglosc + "]");
+            //System.out.println("[" + nowaOdleglosc + " " + staraOdleglosc + "]");
             
             if(nowaOdleglosc > staraOdleglosc){
-                System.out.println("OK");
+                //System.out.println("OK");
                 System.arraycopy(backupPierwszegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany1).listaMiastDoOdwiedzenia, 0, backupPierwszegoPojazdu.length);
                 System.arraycopy(backupDrugiegoPojazdu, 0, listaCiezarowek.get(pojazdDoZmiany2).listaMiastDoOdwiedzenia, 0, backupDrugiegoPojazdu.length);
        
